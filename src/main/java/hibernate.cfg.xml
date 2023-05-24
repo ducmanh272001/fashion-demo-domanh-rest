@@ -3,11 +3,12 @@
 		"-//Hibernate/Hibernate Configuration DTD 3.0//EN"
 		"http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
 <hibernate-configuration>
-    <session-factory>
+	<session-factory>
 		<property name="hibernate.connection.driver_class">org.postgresql.Driver</property>
 		<property name="hibernate.connection.url">jdbc:postgresql://ec2-107-21-67-46.compute-1.amazonaws.com:5432/d4n71oc7dnh1ec</property>
 		<property name="hibernate.connection.username">wyjnrzahvajoem</property>
 		<property name="hibernate.connection.password">34693e66af02171040ffd17f2b0833614734ac2f2c42e8b91567e326b26ebf2b</property>
+		<property name="hibernate.hbm2ddl.auto">update</property>
 		<property name="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</property>
 		<property name="hibernate.show_sql">false</property>
 		<mapping class="com.fashion.entity.TypeProductEntity" />
