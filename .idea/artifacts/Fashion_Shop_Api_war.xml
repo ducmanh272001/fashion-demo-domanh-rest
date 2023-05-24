@@ -1,0 +1,15 @@
+<component name="ArtifactManager">
+	<artifact type="war" name="Fashion-Shop-Api:war">
+		<output-path>$PROJECT_DIR$/target</output-path>
+		<properties id="maven-jee-properties">
+			<options>
+				<module>Fashion-Shop-Api</module>
+				<packaging>war</packaging>
+			</options>
+		</properties>
+		<root id="archive" name="Fashion-Shop-Api-0.0.1-SNAPSHOT.war">
+			<element id="artifact"
+				artifact-name="Fashion-Shop-Api:war exploded" />
+		</root>
+	</artifact>
+</component>
