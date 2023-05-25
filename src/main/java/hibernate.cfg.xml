@@ -5,11 +5,11 @@
 <hibernate-configuration>
 	<session-factory>
 		<property name="hibernate.connection.driver_class">org.postgresql.Driver</property>
-		<property name="hibernate.connection.url">jdbc:postgresql://ec2-52-54-200-216.compute-1.amazonaws.com:5432/d38ns07vnovqes</property>
-		<property name="hibernate.connection.username">xbhdpcjhaoirrf</property>
-		<property name="hibernate.connection.password">eb4aa3ae352617bdbb27daa404f490613dd44f86c7b1589035e3fe983dcddaf1</property>
-		<property name="hibernate.hbm2ddl.auto">update</property>
-		<property name="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</property>
+		<property name="hibernate.connection.url">jdbc:postgresql://${PROD_DB_HOST}:${PROD_DB_PORT}/${PROD_DB_NAME}</property>
+		<property name="hibernate.connection.username">${PROD_DB_USERNAME}</property>
+		<property name="hibernate.connection.password">${PROD_DB_PASSWORD}</property>
+		<property name="hibernate.hbm2ddl.auto">${PROD_DB_UPDATE}</property>
+		<property name="hibernate.dialect">${PROD_DB_PLATFORM}</property>
 		<property name="hibernate.show_sql">false</property>
 		<mapping class="com.fashion.entity.TypeProductEntity" />
 		<mapping class="com.fashion.entity.BranchEntity" />
