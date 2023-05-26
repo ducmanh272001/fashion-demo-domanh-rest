@@ -79,6 +79,25 @@ public class BranchController {
 	}
 	
 	
+	// Xóa
+		@POST
+		@Path(value = "/delete/{idxoa}")
+		public String deleteDanhMuc(@PathParam(value = "idxoa") int idxoa) {
+			Gson gs = new Gson();
+			NotificationEntity tb = new NotificationEntity();
+			Boolean xoatc = BranchServiceImpl.getNewBranchEntity().delete(idxoa);
+			if (xoatc) {
+				tb.setMacode(1);
+				tb.setText("Xóa nhãn hiệu thành công");
+			} else {
+				tb.setMacode(0);
+				tb.setText("Xóa nhãn hiệu không thành công");
+			}
+			String trave = gs.toJson(tb);
+			return trave;
+		}
+	
+	
 
 	@POST
 	@Path(value = "/update")
