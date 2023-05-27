@@ -20,7 +20,9 @@ import javax.ws.rs.core.MediaType;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 
 import com.fashion.entity.NotificationEntity;
+import com.fashion.service.imager.ImagerServiceImpl;
 import com.fashion.service.news.NewsServiceImpl;
+import com.fashion.entity.ImagerEntity;
 import com.fashion.entity.NewsEntity;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -39,13 +41,12 @@ public class NewsController {
 			@FormDataParam(value = "mf") InputStream fileLuu) throws IOException {
 		Gson gs = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
 		NewsEntity hs = gs.fromJson(data, NewsEntity.class);
+		String tenfile = hs.getImg();
 		if (fileLuu != null) {
-			// Lấy ra tên file ảnh
-			String tenfile = hs.getImg();
-			// Lấy ra dường dẫn gốc
 			String ddgoc = servletcontext.getRealPath("/public/img");
 			/// Lưu ý là cái separator là cái dấu xoạc
 			File file = new File(ddgoc + File.separator + tenfile);
+			System.out.println(file);
 			FileOutputStream fos = new FileOutputStream(file);
 			byte buff[] = new byte[1024];
 			int docdl;
@@ -54,13 +55,14 @@ public class NewsController {
 			}
 			fos.close();
 			fileLuu.close();
+
 		} else {
 			System.out.println("Không có multipartfile");
 		}
 		// Bỏ dữ liệu vào haisanImpl;
 		NotificationEntity tb = new NotificationEntity();
-		Boolean themTc = NewsServiceImpl.getNewTinTuc().insert(hs);
-		if (themTc) {
+		Boolean themha = NewsServiceImpl.getNewTinTuc().insert(hs);
+		if (themha) {
 			tb.setMacode(1);
 			tb.setText("Thêm thành công");
 		} else {
