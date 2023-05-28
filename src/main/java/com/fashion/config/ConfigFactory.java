@@ -14,6 +14,7 @@ import com.fashion.entity.CustomerEntity;
 import com.fashion.entity.HotProductEntity;
 import com.fashion.entity.ImagerEntity;
 import com.fashion.entity.NewsEntity;
+import com.fashion.entity.PaymentEntity;
 import com.fashion.entity.ProductDetailEntity;
 import com.fashion.entity.ProductEntity;
 import com.fashion.entity.RoleEntity;
@@ -37,7 +38,8 @@ public class ConfigFactory {
 			prop.setProperty("hibernate.connection.url",
 					"jdbc:postgresql://ec2-52-54-200-216.compute-1.amazonaws.com:5432/d38ns07vnovqes");
 			prop.setProperty("hibernate.connection.username", "xbhdpcjhaoirrf");
-			prop.setProperty("hibernate.connection.password", "eb4aa3ae352617bdbb27daa404f490613dd44f86c7b1589035e3fe983dcddaf1");
+			prop.setProperty("hibernate.connection.password",
+					"eb4aa3ae352617bdbb27daa404f490613dd44f86c7b1589035e3fe983dcddaf1");
 			prop.setProperty("hibernate.hbm2ddl.auto", "update");
 			prop.setProperty("hibernate.dialect", "org.hibernate.dialect.PostgreSQLDialect");
 			prop.setProperty("hibernate.show_sql", "false");
@@ -50,7 +52,8 @@ public class ConfigFactory {
 					.addAnnotatedClass(CustomerEntity.class).addAnnotatedClass(BillEntity.class)
 					.addAnnotatedClass(BillDetailEntity.class).addAnnotatedClass(NewsEntity.class)
 					.addAnnotatedClass(ImagerEntity.class).addAnnotatedClass(HotProductEntity.class)
-					.addAnnotatedClass(CalculateEntity.class).setProperties(prop).buildSessionFactory();
+					.addAnnotatedClass(PaymentEntity.class).addAnnotatedClass(CalculateEntity.class).setProperties(prop)
+					.buildSessionFactory();
 		} catch (Throwable ex) {
 			throw new ExceptionInInitializerError(ex);
 		}

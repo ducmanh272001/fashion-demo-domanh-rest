@@ -6,16 +6,13 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import com.fashion.entity.ColorEntity;
 import com.fashion.entity.NotificationEntity;
-import com.fashion.entity.TypeProductEntity;
 import com.fashion.service.color.ColorServiceImpl;
-import com.fashion.service.typeproduct.TypeProductServiceImpl;
 import com.google.gson.Gson;
-
-import javax.ws.rs.Produces;
 
 @Path(value = "/api/v1/color")
 public class ColorController {
