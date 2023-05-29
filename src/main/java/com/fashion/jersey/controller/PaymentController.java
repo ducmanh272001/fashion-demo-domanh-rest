@@ -3,10 +3,12 @@ package com.fashion.jersey.controller;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -17,6 +19,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -27,12 +30,31 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fashion.entity.CalculateEntity;
+import com.fashion.entity.ColorEntity;
+import com.fashion.entity.NotificationEntity;
+import com.fashion.entity.PaymentEntity;
 import com.fashion.payment.Config;
 import com.fashion.service.calculate.CalculateServiceImpl;
+import com.fashion.service.color.ColorServiceImpl;
+import com.fashion.service.payment.PaymentServiceImpl;
 import com.google.gson.Gson;
 
 @Path(value = "/api/v1/payment")
 public class PaymentController {
+	
+	
+	
+	@GET
+	@Path(value = "/list")
+	@Produces(MediaType.APPLICATION_JSON)
+	public String list() {
+		List<PaymentEntity> list = PaymentServiceImpl.getNewPayment().list();
+		Gson gs = new Gson();
+		String data = gs.toJson(list);
+		return data;
+	}
+	
+	
 
 	@GET
 	@Path(value = "/create-payment")
@@ -46,12 +68,13 @@ public class PaymentController {
 		String floatReplaceLong = req.getParameter("amount").replace(".", "");
 		
 		
-        long amount = Integer.parseInt(floatReplaceLong)*100;
-//        String bankCode = req.getParameter("bankCode");
-//		long amount = 1000000;
+        long amount = Integer.parseInt(floatReplaceLong)*10;
+
 		//Ghi hóa đơn ở đây 
 		String vnp_TxnRef = Config.getRandomNumber(8);
-//		String vnp_IpAddr = Config.getIpAddress(req);
+		
+		//Lưu id Hóa đơn 
+//		String vnp_IpAddr = req.getParameter("idHoaDon");
 		String vnp_TmnCode = Config.vnp_TmnCode;//Mã fig cứng 
 
 		Map<String, String> vnp_Params = new HashMap<>();
@@ -65,6 +88,7 @@ public class PaymentController {
 		vnp_Params.put("vnp_TxnRef", vnp_TxnRef);
 		vnp_Params.put("vnp_OrderInfo", "Thanh toan don hang:" + vnp_TxnRef);
 		vnp_Params.put("vnp_ReturnUrl", Config.vnp_Returnurl);//Mã fig cứng 
+//		vnp_Params.put("vnp_IpAddr", vnp_IpAddr);
 
 		Calendar cld = Calendar.getInstance(TimeZone.getTimeZone("Etc/GMT+7"));
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
@@ -110,31 +134,39 @@ public class PaymentController {
 	@GET
 	@Path(value = "/successfully")
 	@Produces(MediaType.APPLICATION_JSON)
-	public String findAllByProductId(@Context HttpServletRequest request) {
+	public String findAllByProductId(@Context HttpServletRequest request) throws ParseException {
 
 		String amount = request.getParameter("vnp_Amount");
 		String bankCode = request.getParameter("vnp_BankCode");
-		String curentCode = request.getParameter("vnp_CurrCode");
+		String curentCode = request.getParameter("vnp_Locale");
 		String vndCardType = request.getParameter("vnp_CardType");
 		String orderInfo = request.getParameter("vnp_OrderInfo");
-		String codeOrder = request.getParameter("vnp_TmnCode");
-		String date = request.getParameter("vnp_PayDate");
+		String codeOrder = request.getParameter("vnp_TxnRef");//Ma giao dich
+		String dateString = request.getParameter("vnp_PayDate");
+		
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
+		Date utilDate = formatter.parse(dateString);
+		Date date = new Date(utilDate.getTime());
+		
+		
 		String responseCode = request.getParameter("vnp_ResponseCode");
-
-
-		List<String> stringReponse = new ArrayList<>();
-//		stringReponse.add(tmCode);
-		stringReponse.add(responseCode);
-		stringReponse.add(amount);
-		stringReponse.add(bankCode);
-		stringReponse.add(curentCode);
-		stringReponse.add(vndCardType);
-		stringReponse.add(orderInfo);
-		stringReponse.add(responseCode);
-		stringReponse.add(date);
-
-		return stringReponse.toString();
+		
+		PaymentEntity paymentEntity = new PaymentEntity();
+		
+		paymentEntity.setAmount(Long.valueOf(amount));
+		paymentEntity.setBankCode(bankCode);
+		paymentEntity.setCardType(vndCardType);
+		paymentEntity.setCurrency(curentCode);
+		paymentEntity.setResponse(responseCode);
+		paymentEntity.setDatePayment(date);
+		paymentEntity.setIdhd(Integer.valueOf(codeOrder));
+		
+		Boolean saveOk =  PaymentServiceImpl.getNewPayment().create(paymentEntity);
+		
+		if(saveOk) {
+		return  orderInfo;	
+		}
+		return "Không thể thanh toán qua VNPAY";
 	}
 
-	// http://localhost:8080/vnpay_jsp/vnpay_return.jsp?vnp_Amount=1000000&vnp_BankCode=NCB&vnp_BankTranNo=VNP14023780&vnp_CardType=ATM&vnp_OrderInfo=Thanh+toan+don+hang%3A72651602&vnp_PayDate=20230528084906&vnp_ResponseCode=00&vnp_TmnCode=AU9BUAID&vnp_TransactionNo=14023780&vnp_TransactionStatus=00&vnp_TxnRef=72651602&vnp_SecureHash=f7cb9d435bba8bf1a0722ec013b101e64fe7cdb24d6f1ae291953f00e7e219e1ceff76e46d9efa67e27226d1009884443526313c13c4aabaab204db840276e6c
 }
