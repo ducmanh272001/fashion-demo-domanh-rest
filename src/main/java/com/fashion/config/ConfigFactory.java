@@ -36,10 +36,10 @@ public class ConfigFactory {
 			Properties prop = new Properties();
 			prop.setProperty("hibernate.connection.driver_class", "org.postgresql.Driver");
 			prop.setProperty("hibernate.connection.url",
-					"jdbc:postgresql://localhost:5432/macbookair");
-			prop.setProperty("hibernate.connection.username", "postgres");
+					"jdbc:postgresql://ec2-52-54-200-216.compute-1.amazonaws.com:5432/d38ns07vnovqes");
+			prop.setProperty("hibernate.connection.username", "xbhdpcjhaoirrf");
 			prop.setProperty("hibernate.connection.password",
-					"postgres");
+					"eb4aa3ae352617bdbb27daa404f490613dd44f86c7b1589035e3fe983dcddaf1");
 			prop.setProperty("hibernate.hbm2ddl.auto", "update");
 			prop.setProperty("hibernate.dialect", "org.hibernate.dialect.PostgreSQLDialect");
 			prop.setProperty("hibernate.show_sql", "false");
