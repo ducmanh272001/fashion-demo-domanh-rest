@@ -21,8 +21,6 @@ public class CustomerEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "ID")
 	private int id;
-	@Column(name = "`CODE`")
-	private String code;
 	@Column(name = "`NAME`")
 	private String name;
 	@Column(name = "`PASSWORD`")
@@ -33,10 +31,6 @@ public class CustomerEntity {
 	private String call;
 	@Column(name = "`EMAIL`")
 	private String email;
-	@Column(name = "`BIRTHDAY`")
-	private Date birthday;
-	@Column(name = "`GENDER`")
-	private boolean gender;
 	@Column(name = "`STATUS`")
 	private boolean status;
 	@OneToMany(mappedBy = "makh", fetch = FetchType.EAGER)
@@ -48,7 +42,7 @@ public class CustomerEntity {
 	}
 
 	public CustomerEntity(int id, String name, String passwword, String address, String call, String email,
-			Date birthday, boolean gender, boolean status) {
+			boolean status) {
 		super();
 		this.id = id;
 		this.name = name;
@@ -56,8 +50,6 @@ public class CustomerEntity {
 		this.address = address;
 		this.call = call;
 		this.email = email;
-		this.birthday = birthday;
-		this.gender = gender;
 		this.status = status;
 	}
 
@@ -76,7 +68,6 @@ public class CustomerEntity {
 	public void setName(String name) {
 		this.name = name;
 	}
-
 
 	public String getPasswword() {
 		return passwword;
@@ -110,22 +101,6 @@ public class CustomerEntity {
 		this.email = email;
 	}
 
-	public Date getBirthday() {
-		return birthday;
-	}
-
-	public void setBirthday(Date birthday) {
-		this.birthday = birthday;
-	}
-
-	public boolean isGender() {
-		return gender;
-	}
-
-	public void setGender(boolean gender) {
-		this.gender = gender;
-	}
-
 	public boolean getStatus() {
 		return status;
 	}
@@ -144,9 +119,8 @@ public class CustomerEntity {
 
 	@Override
 	public String toString() {
-		return "KhachHang [id=" + id + ", name=" + name + ", passwword=" + passwword
-				+ ", address=" + address + ", call=" + call + ", email=" + email + ", birthday=" + birthday
-				+ ", gender=" + gender + ", status=" + status + ", listHoaDon=" + listHoaDon + "]";
+		return "KhachHang [id=" + id + ", name=" + name + ", passwword=" + passwword + ", address=" + address
+				+ ", call=" + call + ", email=" + email + ", status=" + status + ", listHoaDon=" + listHoaDon + "]";
 	}
 
 }
