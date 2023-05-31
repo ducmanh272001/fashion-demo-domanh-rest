@@ -9,6 +9,8 @@ public interface PaymentService {
 	
 	public Boolean create(PaymentEntity paymentEntity);
 	
-	public List<PaymentEntity> list();
+	public List<PaymentEntity> list(int pageNumber);
+	
+     public Long count();
 
 }

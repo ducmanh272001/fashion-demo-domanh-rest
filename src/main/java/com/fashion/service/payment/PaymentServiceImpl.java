@@ -44,17 +44,36 @@ public class PaymentServiceImpl implements PaymentService {
 	}
 
 	@Override
-	public List<PaymentEntity> list() {
+	public List<PaymentEntity> list(int pageNumber) {
 		// Lấy list tin tức
 		Session ss = FACTORY.openSession();
 		try {
 			ss.beginTransaction();
-			List<PaymentEntity> list = ss.createQuery("from PaymentEntity order by id desc").list();
+			List<PaymentEntity> list = ss.createQuery("from PaymentEntity order by id desc").setMaxResults(8)
+					.setFirstResult((1 - pageNumber) * 8).getResultList();
 			ss.close();
 			return list;
 		} catch (Exception e) {
 			System.out.println("Xảy ra lỗi ngoại lệ");
 			ss.getTransaction().rollback();
+		}
+		return null;
+	}
+
+	@Override
+	public Long count() {
+		// Bắt đầu 1 phiên làm việc
+		Session ss = FACTORY.openSession();
+		try {
+			ss.beginTransaction();
+			// Vì trả về 1 cái nên không cần commit
+			List<Long> list = ss.createQuery("select count(*) from PaymentEntity").list();
+			return list.get(0);
+		} catch (Exception e) {
+			ss.getTransaction().rollback();
+			System.out.println("Lỗi câu lệnh try vấn");
+		} finally {
+			ss.close();
 		}
 		return null;
 	}

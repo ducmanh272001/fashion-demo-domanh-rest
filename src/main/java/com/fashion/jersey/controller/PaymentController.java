@@ -31,30 +31,22 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fashion.entity.CalculateEntity;
 import com.fashion.entity.ColorEntity;
+import com.fashion.entity.CustomerEntity;
 import com.fashion.entity.NotificationEntity;
 import com.fashion.entity.PaymentEntity;
 import com.fashion.payment.Config;
+import com.fashion.service.branch.BranchServiceImpl;
 import com.fashion.service.calculate.CalculateServiceImpl;
 import com.fashion.service.color.ColorServiceImpl;
+import com.fashion.service.customer.CustomerServiceImpl;
 import com.fashion.service.payment.PaymentServiceImpl;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
+import lombok.val;
 
 @Path(value = "/api/v1/payment")
 public class PaymentController {
-	
-	
-	
-	@GET
-	@Path(value = "/list")
-	@Produces(MediaType.APPLICATION_JSON)
-	public String list() {
-		List<PaymentEntity> list = PaymentServiceImpl.getNewPayment().list();
-		Gson gs = new Gson();
-		String data = gs.toJson(list);
-		return data;
-	}
-	
-	
 
 	@GET
 	@Path(value = "/create-payment")
@@ -64,18 +56,17 @@ public class PaymentController {
 		String vnp_Version = "2.1.0";
 		String vnp_Command = "pay";
 //        String orderType = req.getParameter("ordertype");
-		
-		String floatReplaceLong = req.getParameter("amount").replace(".", "");
-		
-		
-        long amount = Integer.parseInt(floatReplaceLong)*10;
 
-		//Ghi hóa đơn ở đây 
+		String floatReplaceLong = req.getParameter("amount").replace(".", "");
+
+		long amount = Integer.parseInt(floatReplaceLong) * 10;
+
+		// Ghi hóa đơn ở đây
 		String vnp_TxnRef = Config.getRandomNumber(8);
-		
-		//Lưu id Hóa đơn 
+
+		// Lưu id Hóa đơn
 //		String vnp_IpAddr = req.getParameter("idHoaDon");
-		String vnp_TmnCode = Config.vnp_TmnCode;//Mã fig cứng 
+		String vnp_TmnCode = Config.vnp_TmnCode;// Mã fig cứng
 
 		Map<String, String> vnp_Params = new HashMap<>();
 		vnp_Params.put("vnp_Version", vnp_Version);
@@ -87,7 +78,7 @@ public class PaymentController {
 		vnp_Params.put("vnp_Locale", "vn");
 		vnp_Params.put("vnp_TxnRef", vnp_TxnRef);
 		vnp_Params.put("vnp_OrderInfo", "Thanh toan don hang:" + vnp_TxnRef);
-		vnp_Params.put("vnp_ReturnUrl", Config.vnp_Returnurl);//Mã fig cứng 
+		vnp_Params.put("vnp_ReturnUrl", Config.vnp_Returnurl);// Mã fig cứng
 //		vnp_Params.put("vnp_IpAddr", vnp_IpAddr);
 
 		Calendar cld = Calendar.getInstance(TimeZone.getTimeZone("Etc/GMT+7"));
@@ -126,7 +117,6 @@ public class PaymentController {
 		String vnp_SecureHash = Config.hmacSHA512(Config.vnp_HashSecret, hashData.toString());
 		queryUrl += "&vnp_SecureHash=" + vnp_SecureHash;
 		String paymentUrl = Config.vnp_PayUrl + "?" + queryUrl;
-		
 
 		return paymentUrl;
 	}
@@ -141,32 +131,56 @@ public class PaymentController {
 		String curentCode = request.getParameter("vnp_Locale");
 		String vndCardType = request.getParameter("vnp_CardType");
 		String orderInfo = request.getParameter("vnp_OrderInfo");
-		String codeOrder = request.getParameter("vnp_TxnRef");//Ma giao dich
+		String codeOrder = request.getParameter("vnp_TxnRef");// Ma giao dich
 		String dateString = request.getParameter("vnp_PayDate");
-		
+
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
 		Date utilDate = formatter.parse(dateString);
 		Date date = new Date(utilDate.getTime());
-		
-		
+
 		String responseCode = request.getParameter("vnp_ResponseCode");
-		
+
 		PaymentEntity paymentEntity = new PaymentEntity();
+
 		
-		paymentEntity.setAmount(Long.valueOf(amount));
+		Long amoutMoney = (Long.valueOf(amount) / 100);
+		paymentEntity.setAmount(Long.valueOf(amoutMoney));
 		paymentEntity.setBankCode(bankCode);
 		paymentEntity.setCardType(vndCardType);
 		paymentEntity.setCurrency(curentCode);
 		paymentEntity.setResponse(responseCode);
 		paymentEntity.setDatePayment(date);
 		paymentEntity.setIdhd(Integer.valueOf(codeOrder));
-		
-		Boolean saveOk =  PaymentServiceImpl.getNewPayment().create(paymentEntity);
-		
-		if(saveOk) {
-		return  orderInfo;	
+
+		Boolean saveOk = PaymentServiceImpl.getNewPayment().create(paymentEntity);
+
+		if (saveOk) {
+			return orderInfo;
 		}
 		return "Không thể thanh toán qua VNPAY";
+	}
+
+	/// Payment
+
+	@GET
+	@Path("/list/{pageNumber}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public String listpPayment(@PathParam(value = "pageNumber")Integer pageNumber) {
+		List<PaymentEntity> list = PaymentServiceImpl.getNewPayment().list(pageNumber);
+		Gson gs = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
+		String dulieu = gs.toJson(list);
+		return dulieu;
+	}
+	
+	
+	@GET
+	@Path(value = "/count")
+	@Produces(MediaType.APPLICATION_JSON)
+	public String count() {
+		Long soluong = PaymentServiceImpl.getNewPayment().count();
+		Gson gs = new Gson();
+		String data = gs.toJson(soluong);
+		return data;
 	}
 
 }
