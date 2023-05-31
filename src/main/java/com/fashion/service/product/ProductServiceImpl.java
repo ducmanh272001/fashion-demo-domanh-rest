@@ -1,6 +1,9 @@
 package com.fashion.service.product;
 
+import java.text.Normalizer;
 import java.util.List;
+import java.util.Objects;
+import java.util.regex.Pattern;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -766,10 +769,17 @@ public class ProductServiceImpl implements ProductService<ProductEntity> {
 			if (idtim == null) {
 				System.out.println("Xin vui lòng điền giá trị");
 			} else {
-				idtim = "%" + idtim + "%";
+				idtim = "%" + idtim.trim() + "%";
 			}
 			List<ProductEntity> lst = ss.createQuery("from ProductEntity where name like :namela")
 					.setParameter("namela", idtim).list();
+			if (Objects.isNull(lst)) {
+				String search = this.removeAccent("%" + idtim.toLowerCase().trim() + "%");
+				List<ProductEntity> lok = ss
+						.createQuery("from ProductEntity where lower(unaccent(name)) like lower(unaccent(:namela))")
+						.setParameter("namela", search).list();
+				return lok;
+			}
 			return lst;
 		} catch (Exception e) {
 			System.out.println("Lỗi Truy Vấn");
@@ -778,6 +788,17 @@ public class ProductServiceImpl implements ProductService<ProductEntity> {
 			ss.close();
 		}
 		return null;
+	}
+
+	public static String removeAccent(String str) {
+		try {
+			String temp = Normalizer.normalize(str, Normalizer.Form.NFD);
+			Pattern pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
+			return pattern.matcher(temp).replaceAll("").toLowerCase().replaceAll("đ", "d");
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		return "";
 	}
 
 	@Override

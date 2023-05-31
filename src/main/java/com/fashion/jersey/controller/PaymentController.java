@@ -144,7 +144,7 @@ public class PaymentController {
 
 		
 		Long amoutMoney = (Long.valueOf(amount) / 100);
-		paymentEntity.setAmount(Long.valueOf(amoutMoney));
+		paymentEntity.setAmount(amoutMoney);
 		paymentEntity.setBankCode(bankCode);
 		paymentEntity.setCardType(vndCardType);
 		paymentEntity.setCurrency(curentCode);
