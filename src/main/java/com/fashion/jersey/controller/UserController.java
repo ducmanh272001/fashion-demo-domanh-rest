@@ -63,6 +63,20 @@ public class UserController {
 		return trave;
 
 	}
+	
+	// Api thêm
+		@POST
+		@Path(value = "/save")
+		@Produces(MediaType.APPLICATION_JSON)
+		public String saveUser(String data) {
+			Gson gs = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
+			UserEntity user = gs.fromJson(data, UserEntity.class);
+			UserEntity themTc = UserServiceImpl.getNewUser().save(user);
+			String trave = gs.toJson(themTc);
+			return trave;
+
+		}
+
 
 	@POST
 	@Path(value = "/update")

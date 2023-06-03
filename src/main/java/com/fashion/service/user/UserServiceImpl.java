@@ -8,7 +8,6 @@ import org.hibernate.SessionFactory;
 import com.fashion.config.ConfigFactory;
 import com.fashion.entity.UserEntity;
 
-
 public class UserServiceImpl implements UserService<UserEntity> {
 
 	private SessionFactory FACTORY;
@@ -57,34 +56,14 @@ public class UserServiceImpl implements UserService<UserEntity> {
 		}
 		return null;
 	}
-	
-	
-	
+
 	public UserEntity selectByUserName(String name) {
 		// Mở 1 biến session
 		Session ss = FACTORY.openSession();
 		try {
 			ss.beginTransaction();
-			UserEntity user = (UserEntity) ss.createQuery("from UserEntity where name = :namela").setParameter("namela", name).uniqueResult();
-			return user;
-		} catch (Exception e) {
-			System.out.println("Lỗi Truy Vấn");
-			ss.getTransaction().rollback();
-		} finally {
-			ss.close();
-		}
-		return null;
-	}
-	
-	
-	//logi form dang nhap
-	public UserEntity selectByDangNhap(String username, String password) {
-		// Mở 1 biến session
-		Session ss = FACTORY.openSession();
-		try {
-			ss.beginTransaction();
-			UserEntity user = (UserEntity) ss.createQuery("from UserEntity where name = :namela and password = :pass").setParameter("namela", username)
-					.setParameter("pass", password).uniqueResult();
+			UserEntity user = (UserEntity) ss.createQuery("from UserEntity where name = :namela")
+					.setParameter("namela", name).uniqueResult();
 			return user;
 		} catch (Exception e) {
 			System.out.println("Lỗi Truy Vấn");
@@ -95,14 +74,31 @@ public class UserServiceImpl implements UserService<UserEntity> {
 		return null;
 	}
 
-	
-	
+	// logi form dang nhap
+	public UserEntity selectByDangNhap(String username, String password) {
+		// Mở 1 biến session
+		Session ss = FACTORY.openSession();
+		try {
+			ss.beginTransaction();
+			UserEntity user = (UserEntity) ss.createQuery("from UserEntity where name = :namela and password = :pass")
+					.setParameter("namela", username).setParameter("pass", password).uniqueResult();
+			return user;
+		} catch (Exception e) {
+			System.out.println("Lỗi Truy Vấn");
+			ss.getTransaction().rollback();
+		} finally {
+			ss.close();
+		}
+		return null;
+	}
+
 	public UserEntity selectByPass(String pass) {
 		// Mở 1 biến session
 		Session ss = FACTORY.openSession();
 		try {
 			ss.beginTransaction();
-			UserEntity user = (UserEntity) ss.createQuery("from UserEntity where password = :passla").setParameter("passla", pass).uniqueResult();
+			UserEntity user = (UserEntity) ss.createQuery("from UserEntity where password = :passla")
+					.setParameter("passla", pass).uniqueResult();
 			return user;
 		} catch (Exception e) {
 			System.out.println("Lỗi Truy Vấn");
@@ -131,7 +127,6 @@ public class UserServiceImpl implements UserService<UserEntity> {
 		}
 		return false;
 	}
-	
 
 	@Override
 	public boolean update(UserEntity t) {
@@ -164,7 +159,8 @@ public class UserServiceImpl implements UserService<UserEntity> {
 		Session ss = FACTORY.openSession();
 		try {
 			ss.beginTransaction();
-			int xoaTc = ss.createQuery("delete from UserEntity where id = :idla").setParameter("idla", idxoa).executeUpdate();
+			int xoaTc = ss.createQuery("delete from UserEntity where id = :idla").setParameter("idla", idxoa)
+					.executeUpdate();
 			ss.getTransaction().commit();
 			if (xoaTc > 0) {
 				System.out.println("Ban da xoa id user la " + idxoa + " ra khoi co so du lieu");
@@ -187,8 +183,27 @@ public class UserServiceImpl implements UserService<UserEntity> {
 		Session ss = FACTORY.openSession();
 		try {
 			ss.beginTransaction();
-			UserEntity user = (UserEntity) ss.createQuery("from UserEntity where name = :name").setParameter("name", email).uniqueResult();
+			UserEntity user = (UserEntity) ss.createQuery("from UserEntity where name = :name")
+					.setParameter("name", email).uniqueResult();
 			return user;
+		} catch (Exception e) {
+			System.out.println("Lỗi Truy Vấn");
+			ss.getTransaction().rollback();
+		} finally {
+			ss.close();
+		}
+		return null;
+	}
+
+	@Override
+	public UserEntity save(UserEntity t) {
+		Session ss = FACTORY.openSession();
+		try {
+			ss.beginTransaction();
+			ss.save(t);
+			System.out.println("Bạn đã thêm user có ID là " + t.getId() + " vào cơ sở dữ liệu");
+			ss.getTransaction().commit();
+			return t;
 		} catch (Exception e) {
 			System.out.println("Lỗi Truy Vấn");
 			ss.getTransaction().rollback();

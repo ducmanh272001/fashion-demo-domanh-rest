@@ -760,35 +760,30 @@ public class ProductServiceImpl implements ProductService<ProductEntity> {
 		return false;
 	}
 
-	@Override
-	public List<ProductEntity> selectByName(String idtim) {
-		// Mở 1 biến session
-		Session ss = FACTORY.openSession();
-		try {
-			ss.beginTransaction();
-			if (idtim == null) {
-				System.out.println("Xin vui lòng điền giá trị");
-			} else {
-				idtim = "%" + idtim.trim() + "%";
-			}
-			List<ProductEntity> lst = ss.createQuery("from ProductEntity where name like :namela")
-					.setParameter("namela", idtim).list();
-			if (Objects.isNull(lst)) {
-				String search = this.removeAccent("%" + idtim.toLowerCase().trim() + "%");
-				List<ProductEntity> lok = ss
-						.createQuery("from ProductEntity where lower(unaccent(name)) like lower(unaccent(:namela))")
-						.setParameter("namela", search).list();
-				return lok;
-			}
-			return lst;
-		} catch (Exception e) {
-			System.out.println("Lỗi Truy Vấn");
-			ss.getTransaction().rollback();
-		} finally {
-			ss.close();
+		@Override
+		public List<ProductEntity> selectByName(String idtim) {
+			 // Mở 1 biến session
+		    Session ss = FACTORY.openSession();
+		    try {
+		        ss.beginTransaction();
+		        if (idtim == null) {
+		            System.out.println("Xin vui lòng điền giá trị");
+		        } else {
+		            idtim = "%" + idtim.trim() + "%";
+		        }
+		        String search = this.removeAccent(idtim.toLowerCase().trim());
+		        List<ProductEntity> lst = ss.createQuery("from ProductEntity where lower(unaccent(name)) like lower(unaccent(:namela))")
+		                .setParameter("namela", search)
+		                .list();
+		        return lst;
+		    } catch (Exception e) {
+		        System.out.println("Lỗi Truy Vấn");
+		        ss.getTransaction().rollback();
+		    } finally {
+		        ss.close();
+		    }
+		    return null;
 		}
-		return null;
-	}
 
 	public static String removeAccent(String str) {
 		try {

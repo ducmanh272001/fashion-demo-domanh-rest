@@ -34,12 +34,14 @@ import com.fashion.entity.ColorEntity;
 import com.fashion.entity.CustomerEntity;
 import com.fashion.entity.NotificationEntity;
 import com.fashion.entity.PaymentEntity;
+import com.fashion.entity.ProductEntity;
 import com.fashion.payment.Config;
 import com.fashion.service.branch.BranchServiceImpl;
 import com.fashion.service.calculate.CalculateServiceImpl;
 import com.fashion.service.color.ColorServiceImpl;
 import com.fashion.service.customer.CustomerServiceImpl;
 import com.fashion.service.payment.PaymentServiceImpl;
+import com.fashion.service.product.ProductServiceImpl;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -120,45 +122,29 @@ public class PaymentController {
 
 		return paymentUrl;
 	}
-
-	@GET
-	@Path(value = "/successfully")
+	
+	
+	
+	
+	@POST
+	@Path(value = "/insert")
 	@Produces(MediaType.APPLICATION_JSON)
-	public String findAllByProductId(@Context HttpServletRequest request) throws ParseException {
-
-		String amount = request.getParameter("vnp_Amount");
-		String bankCode = request.getParameter("vnp_BankCode");
-		String curentCode = request.getParameter("vnp_Locale");
-		String vndCardType = request.getParameter("vnp_CardType");
-		String orderInfo = request.getParameter("vnp_OrderInfo");
-		String codeOrder = request.getParameter("vnp_TxnRef");// Ma giao dich
-		String dateString = request.getParameter("vnp_PayDate");
-
-		SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
-		Date utilDate = formatter.parse(dateString);
-		Date date = new Date(utilDate.getTime());
-
-		String responseCode = request.getParameter("vnp_ResponseCode");
-
-		PaymentEntity paymentEntity = new PaymentEntity();
-
-		
-		Long amoutMoney = (Long.valueOf(amount) / 100);
-		paymentEntity.setAmount(amoutMoney);
-		paymentEntity.setBankCode(bankCode);
-		paymentEntity.setCardType(vndCardType);
-		paymentEntity.setCurrency(curentCode);
-		paymentEntity.setResponse(responseCode);
-		paymentEntity.setDatePayment(date);
-		paymentEntity.setIdhd(Integer.valueOf(codeOrder));
-
-		Boolean saveOk = PaymentServiceImpl.getNewPayment().create(paymentEntity);
-
+	public String insert(String data) {
+		Gson gs = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
+		PaymentEntity hs = gs.fromJson(data, PaymentEntity.class);
+		NotificationEntity tb = new NotificationEntity();
+		Boolean saveOk = PaymentServiceImpl.getNewPayment().create(hs);
 		if (saveOk) {
-			return orderInfo;
+			tb.setMacode(1);
+			tb.setText("Thêm thành công");
+		} else {
+			tb.setMacode(0);
+			tb.setText("Thêm thất bại");
 		}
-		return "Không thể thanh toán qua VNPAY";
+		String trave = gs.toJson(tb);
+		return trave;
 	}
+
 
 	/// Payment
 

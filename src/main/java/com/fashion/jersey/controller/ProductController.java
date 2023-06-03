@@ -125,7 +125,7 @@ public class ProductController {
 		NotificationEntity tb = new NotificationEntity();
 		Boolean themTc = ProductServiceImpl.getNewSanPham().insert(hs);
 		if (themTc) {
-			tb.setMacode(hs.getId());
+			tb.setMacode(1);
 			tb.setText("Thêm thành công");
 		} else {
 			tb.setMacode(0);
@@ -247,9 +247,11 @@ public class ProductController {
 		for (ProductEntity sanpham : lsearch) {
 			sanpham.setIdnhanhieu(sanpham.getIdnh().getId());
 			sanpham.setIdtheloai(sanpham.getIdlsp().getId());
+			sanpham.setTennh(sanpham.getIdnh().getName_brand());
+			sanpham.setTenloai(sanpham.getIdlsp().getLoai_sp());
 			sanpham.setIdlsp(null);
-			sanpham.setListSanPhamCt(null);
 			sanpham.setIdnh(null);
+			sanpham.setListSanPhamCt(null);
 			sanpham.setListHinhAnh(null);
 		}
 		Gson gs = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();

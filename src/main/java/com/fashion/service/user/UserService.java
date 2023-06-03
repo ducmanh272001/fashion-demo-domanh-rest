@@ -11,4 +11,5 @@ public interface UserService <T> {
 	public List<T> selectByName(String idtim);
 	public boolean delete(int idxoa);
 	public T findByEmail(String email);
+	public T save(T t);
 }
