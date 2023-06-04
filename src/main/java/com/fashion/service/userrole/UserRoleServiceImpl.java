@@ -6,9 +6,7 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 
 import com.fashion.config.ConfigFactory;
-import com.fashion.entity.UserEntity;
 import com.fashion.entity.UserRoleEntity;
-
 
 public class UserRoleServiceImpl implements UserRoleService<UserRoleEntity> {
 
@@ -71,14 +69,15 @@ public class UserRoleServiceImpl implements UserRoleService<UserRoleEntity> {
 		}
 		return null;
 	}
-	
-	///tìm id người dungf
+
+	/// tìm id người dungf
 	public UserRoleEntity selectByNguoiDung(int id) {
 		// Mở 1 biến session
 		Session ss = FACTORY.openSession();
 		try {
 			ss.beginTransaction();
-			UserRoleEntity us = (UserRoleEntity) ss.createQuery("from UserRoleEntity where userId.id = :idla").setParameter("idla", id).getSingleResult();
+			UserRoleEntity us = (UserRoleEntity) ss.createQuery("from UserRoleEntity where userId.id = :idla")
+					.setParameter("idla", id).getSingleResult();
 			return us;
 		} catch (Exception e) {
 			System.out.println("Lỗi Truy Vấn");
@@ -88,7 +87,6 @@ public class UserRoleServiceImpl implements UserRoleService<UserRoleEntity> {
 		}
 		return null;
 	}
-	
 
 	@Override
 	public boolean insert(UserRoleEntity t) {
@@ -123,7 +121,21 @@ public class UserRoleServiceImpl implements UserRoleService<UserRoleEntity> {
 
 	@Override
 	public boolean delete(int idxoa) {
-		// TODO Auto-generated method stub
+		// Mở 1 biến session
+		Session ss = FACTORY.openSession();
+		try {
+			ss.beginTransaction();
+			UserRoleEntity nh = ss.get(UserRoleEntity.class, idxoa);
+			ss.delete(nh);
+			System.out.println("Bạn đã xóa id là " + idxoa + " ra khỏi cơ sở dữ liệu");
+			ss.getTransaction().commit();
+			return true;
+		} catch (Exception e) {
+			System.out.println("Xảy ra lỗi câu lệnh truy vấn");
+			ss.getTransaction().rollback();
+		} finally {
+			ss.close();
+		}
 		return false;
 	}
 
