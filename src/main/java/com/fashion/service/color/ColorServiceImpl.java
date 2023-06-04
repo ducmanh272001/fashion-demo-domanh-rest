@@ -7,6 +7,9 @@ import org.hibernate.SessionFactory;
 
 import com.fashion.config.ConfigFactory;
 import com.fashion.entity.ColorEntity;
+import com.fashion.entity.TypeProductEntity;
+import com.fashion.service.typeproduct.TypeProductServiceImpl;
+import com.google.gson.Gson;
 
 public class ColorServiceImpl implements ColorService<ColorEntity> {
 
@@ -110,9 +113,10 @@ public class ColorServiceImpl implements ColorService<ColorEntity> {
 		try {
 			// Bắt đầu 1 phiên làm việc
 			ss.beginTransaction();
-			ColorEntity ms = (ColorEntity) ss.createQuery("from ColorEntity where name = :idla").setParameter("idla", idtim).uniqueResult();
+			ColorEntity ms = (ColorEntity) ss.createQuery("from ColorEntity where name = :idla")
+					.setParameter("idla", idtim).uniqueResult();
 			ss.getTransaction().commit();
-            return ms;
+			return ms;
 		} catch (Exception e) {
 			System.out.println("Xảy ra lỗi truy vấn");
 			ss.getTransaction().rollback();
@@ -147,6 +151,44 @@ public class ColorServiceImpl implements ColorService<ColorEntity> {
 			ss.close();
 		}
 		return false;
+	}
+
+	@Override
+	public List<ColorEntity> pageSize(int pageNumber) {
+		// mỞ sesion ra
+		Session ss = FACTORY.openSession();
+		try {
+			// Bắt đầu 1 phiên làm việc
+			ss.beginTransaction();
+			// Vì là lấy ra dữ liệu nên sẽ ko cần commit
+			List<ColorEntity> lst = ss.createQuery("from ColorEntity order by id desc").setMaxResults(8)
+					.setFirstResult((pageNumber - 1) * 8).getResultList();
+			return lst;
+		} catch (Exception e) {
+			System.out.println("Lỗi câu lệnh truy vấn");
+			ss.getTransaction().rollback();
+		} finally {
+			ss.close();
+		}
+		return null;
+	}
+
+	@Override
+	public Long count() {
+		// Bắt đầu 1 phiên làm việc
+		Session ss = FACTORY.openSession();
+		try {
+			ss.beginTransaction();
+			// Vì trả về 1 cái nên không cần commit
+			List<Long> list = ss.createQuery("select count(*) from ColorEntity").list();
+			return list.get(0);
+		} catch (Exception e) {
+			ss.getTransaction().rollback();
+			System.out.println("Lỗi câu lệnh try vấn");
+		} finally {
+			ss.close();
+		}
+		return null;
 	}
 
 }

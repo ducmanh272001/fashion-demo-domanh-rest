@@ -10,4 +10,6 @@ public interface ColorService <T> {
 	public boolean update(T t);
 	public List<T> selectByName(String idtim);
 	public boolean delete(int idxoa);
+	public List<T> pageSize(int pageNumber);
+	public Long count();
 }
