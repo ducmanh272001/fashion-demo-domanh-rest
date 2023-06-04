@@ -125,7 +125,7 @@ public class ProductController {
 		NotificationEntity tb = new NotificationEntity();
 		Boolean themTc = ProductServiceImpl.getNewSanPham().insert(hs);
 		if (themTc) {
-			tb.setMacode(1);
+			tb.setMacode(hs.getId());
 			tb.setText("Thêm thành công");
 		} else {
 			tb.setMacode(0);
